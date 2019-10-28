@@ -1,3 +1,4 @@
+import math
 from typing import List
 
 Vector = List[float]
@@ -12,8 +13,18 @@ def de_mean(xs: List[float]) -> List[float]:
     return [x - x_bar for x in xs]
 
 
+def dot(v: Vector, w: Vector) -> float:
+    assert len(v) == len(w)
+
+    return sum(v_i * w_i for v_i, w_i in zip(v, w))
+
+
 def total_sum_of_squares(y: Vector) -> float:
     return sum(v ** 2 for v in de_mean(y))
+
+
+def sum_of_squares(v: Vector) -> float:
+    return dot(v, v)
 
 
 def predict(theta_0: float, theta_1: float, x_i: float) -> float:
@@ -32,3 +43,40 @@ def sum_of_sqerrors(theta_0: float, theta_1: float, x: Vector, y: Vector) -> flo
 def r_squared(theta_0: float, theta_1: float, x: Vector, y: Vector) -> float:
     return 1.0 - (sum_of_sqerrors(theta_0, theta_1, x, y) /
                   total_sum_of_squares(y))
+
+
+def quantile(xs: List[float], p: float) -> float:
+    p_index = int(p * len(xs))
+    return sorted(xs)[p_index]
+
+
+def variance(xs: List[float]) -> float:
+    assert len(xs) >= 2
+
+    n = len(xs)
+    deviations = de_mean(xs)
+    return sum_of_squares(deviations) / (n - 1)
+
+
+def standard_deviation(xs: List[float]) -> float:
+    return math.sqrt(variance(xs))
+
+
+def count(xs: List[float]) -> float:
+    return float(len(xs))
+
+
+def min_(xs: List[float]) -> float:
+    my_min = xs[0]
+    for elem in xs:
+        if elem < my_min:
+            my_min = elem
+    return my_min
+
+
+def max_(xs: List[float]) -> float:
+    my_min = xs[0]
+    for elem in xs:
+        if elem > my_min:
+            my_min = elem
+    return my_min
