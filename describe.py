@@ -6,19 +6,22 @@ import numpy as np
 
 
 def get_dataset(dataset_path):
-    if os.path.exists(dataset_path) and os.path.isfile(dataset_path):
-        dataframe = pd.read_csv(dataset_path)
-        return dataframe
+    try:
+        if os.path.exists(dataset_path) and os.path.isfile(dataset_path):
+            dataframe = pd.read_csv(dataset_path)
+            return dataframe
+    except ValueError:
+        pass
     return
 
 
-def filter_dataframe(df_raw):
+def filter_dataframe(df_raw: pd.DataFrame) -> pd.DataFrame:
     df_raw = df_raw.drop(['Hogwarts House'], axis=1)
     df = df_raw.select_dtypes([np.number])
     return df
 
 
-def manual_describe(df):
+def manual_describe(df: pd.DataFrame)-> pd.DataFrame:
     output_df = pd.DataFrame(columns=[columnName for (columnName, columnData) in df.iteritems()],
                              index=['Count', 'Mean', 'Std', 'Min', '25%', '50%', '75%', 'Max'])
     for (columnName, columnData) in df.iteritems():
@@ -48,7 +51,7 @@ def main():
     df = filter_dataframe(df_raw)
     describe_df = manual_describe(df)
     print(describe_df)
-    print(df.describe())
+    # print(df.describe())
 
 
 if __name__ == "__main__":
