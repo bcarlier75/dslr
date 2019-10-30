@@ -1,16 +1,14 @@
+from sys import argv
+from maths import count, mean, standard_deviation, min_, quantile, median, max_
 import pandas as pd
 import os
-import sys
-from maths import *
 import numpy as np
 
 
-def get_dataset():
-    if len(sys.argv) > 1:
-        file_name = sys.argv[1]
-        if os.path.exists(file_name) and os.path.isfile(file_name):
-            dataframe = pd.read_csv(file_name)
-            return dataframe
+def get_dataset(dataset_path):
+    if os.path.exists(dataset_path) and os.path.isfile(dataset_path):
+        dataframe = pd.read_csv(dataset_path)
+        return dataframe
     return
 
 
@@ -41,12 +39,15 @@ def manual_describe(df):
 
 
 def main():
-    df_raw = get_dataset()
+    if len(argv) > 1:
+        df_raw = get_dataset(argv[1])
+    else:
+        return print('Please input the path to the dataset as the first argument.')
     if df_raw is None:
-        return print('Please input a valid file as first argument.')
+        return print('Please input a valid path to the dataset.')
     df = filter_dataframe(df_raw)
-    describe_output = manual_describe(df)
-    print(describe_output)
+    describe_df = manual_describe(df)
+    print(describe_df)
     print(df.describe())
 
 
