@@ -21,7 +21,7 @@ def filter_dataframe(df_raw: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def manual_describe(df: pd.DataFrame)-> pd.DataFrame:
+def manual_describe(df: pd.DataFrame) -> pd.DataFrame:
     output_df = pd.DataFrame(columns=[columnName for (columnName, columnData) in df.iteritems()],
                              index=['Count', 'Mean', 'Std', 'Min', '25%', '50%', '75%', 'Max'])
     for (columnName, columnData) in df.iteritems():
