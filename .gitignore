@@ -103,3 +103,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# specifics for this project
+houses.csv
+weights.npy
