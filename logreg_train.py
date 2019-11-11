@@ -36,7 +36,7 @@ class LogisticRegressionOvrTrain(object):
         grad = 1 / m * (np.dot((y - h), x))
         return cost, grad
 
-    def fit(self, x, y, max_iter=5000, alpha=0.1, verbose=False):
+    def fit(self, x, y, max_iter=5000, alpha=0.01, verbose=False):
         x = np.insert(x, 0, 1, axis=1)
         thetas = []
         classes = np.unique(y)

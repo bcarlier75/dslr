@@ -12,7 +12,7 @@ class LogisticRegressionOvrPredict(object):
             x[i] = (x[i] - x.mean()) / x.std()
         return x
 
-    def preprocessing(self, df):
+    def preprocessing(self, df: pd.DataFrame):
         df_features = df.iloc[:, 5:]
         df_features = df_features.fillna(df.mean())
         df_features = np.array(df_features)
