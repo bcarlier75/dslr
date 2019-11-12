@@ -30,7 +30,7 @@ class LogisticRegressionOvrGd(object):
 
     def _loss(self, h, y, m):
         e = 1e-6
-        loss = 1 / m * np.sum(-y * np.log(h + e) - (1 - y) * np.log(1 - h + e))
+        loss = -1 / m * np.sum(y * np.log(h + e) + (1 - y) * np.log(1 - h + e))
         return loss
 
     def fit(self, x, y, num_iter=5000, alpha=0.01, verbose=False):
