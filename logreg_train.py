@@ -28,30 +28,28 @@ class LogisticRegressionOvrTrain(object):
                             for theta in thetas]) for xi in x]
         return [classes[p] for p in preds]
 
-    def _cost(self, theta, x, y):
-        epsilon = 1e-5
-        h = self._sigmoid(np.dot(x, theta))
-        m = len(y)
-        cost = (1 / m) * np.sum(-y * np.log(h + epsilon) - (1 - y) * np.log(1 - h + epsilon))
-        grad = 1 / m * (np.dot((y - h), x))
-        return cost, grad
+    def _loss(self, h, y):
+        e = 1e-6
+        loss = 1 / len(y) * np.sum(-y * np.log(h + e) - (1 - y) * np.log(1 - h + e))
+        return loss
 
-    def fit(self, x, y, max_iter=5000, alpha=0.01, verbose=False):
+    def fit(self, x, y, num_iter=5000, lr=0.01, verbose=False):
         x = np.insert(x, 0, 1, axis=1)
         thetas = []
         classes = np.unique(y)
-        costs = np.zeros(max_iter)
+        costs = np.zeros(num_iter)
         # one vs. rest binary classification
         for c in classes:
             if verbose:
                 print(f'\nClass {c} vs all:')
             binary_y = np.where(y == c, 1, 0)
             theta = np.zeros(x.shape[1])
-            for epoch in range(max_iter):
-                costs[epoch], grad = self._cost(theta, x, binary_y)
-                theta += alpha * grad
-                if verbose and epoch % (max_iter / 10) == 0:
-                    print(f'epoch {epoch:<6}: loss is {costs[epoch]:.15f}')
+            for epoch in range(num_iter):
+                h = self._sigmoid(np.dot(x, theta))
+                grad = 1 / len(binary_y) * np.dot((binary_y - h), x)
+                theta += lr * grad
+                if verbose and epoch % (num_iter / 10) == 0:
+                    print(f'epoch {epoch:<6}: loss is {self._loss(h, binary_y):.15f}')
             thetas.append(theta)
         return thetas
 
@@ -63,7 +61,7 @@ if __name__ == "__main__":
     df_train = pd.read_csv(sys.argv[1], index_col="Index")
     logreg = LogisticRegressionOvrTrain()
     x_train, y_train = logreg.preprocessing(df_train)
-    weights = logreg.fit(x_train, y_train, max_iter=5000, alpha=0.01, verbose=verb)
+    weights = logreg.fit(x_train, y_train, num_iter=5000, lr=0.01, verbose=verb)
     np.save('weights', weights)
     print('Weights saved to weights.npy.')
     if verb:
