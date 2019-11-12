@@ -53,23 +53,23 @@ def score(y_p, y_t):
 
 
 def confusion_matrix(classes, y_t, y_p):
-    cm_matrix = pd.DataFrame(0, columns=classes, index=classes)
+    cm_tab = pd.DataFrame(0, columns=classes, index=classes)
     for i in range(len(y_p)):
-        for c in cm_matrix.columns:
+        for c in cm_tab.columns:
             sublist = [x for x in classes if x != c]
             if y_p[i] == c and y_t[i] == c:
-                cm_matrix.loc[c][c] += 1
+                cm_tab.loc[c][c] += 1
             for j in range(len(sublist)):
                 if y_p[i] == c and y_t[i] == sublist[j]:
-                    cm_matrix.loc[sublist[j]][c] += 1
-    assert cm_matrix.values.sum() == len(y_p)
-    return cm_matrix
+                    cm_tab.loc[sublist[j]][c] += 1
+    assert cm_tab.values.sum() == len(y_p)
+    return cm_tab
 
 
 def metrics(cm, classes, debug=False):
     m_classes = classes + ['--avg--']
-    metrics = pd.DataFrame(0, index=m_classes, columns=['precision', 'recall', 'f1-score', 'N Obs'])
-    metrics = metrics.astype({'precision': float, 'recall': float, 'f1-score': float, 'N Obs': int})
+    m_tab = pd.DataFrame(0, index=m_classes, columns=['precision', 'recall', 'f1-score', 'N Obs'])
+    m_tab = m_tab.astype({'precision': float, 'recall': float, 'f1-score': float, 'N Obs': int})
     for c in cm.columns:
         tp = tn = fp = fn = 0
         sublist = [x for x in classes if x != c]
@@ -86,10 +86,10 @@ def metrics(cm, classes, debug=False):
                   f'True negatives: {tn}\n\t'
                   f'False positives: {fp}\n\t'
                   f'False negatives: {fn}')
-        metrics.loc[c, 'precision'], metrics.loc[c, 'recall'], metrics.loc[c, 'f1-score'], metrics.loc[c, 'N Obs'] \
+        m_tab.loc[c, 'precision'], m_tab.loc[c, 'recall'], m_tab.loc[c, 'f1-score'], m_tab.loc[c, 'N Obs'] \
             = precision, recall, f1score, n_obs
-    metrics.loc['--avg--', 'precision'] = metrics.loc[classes[0]:classes[len(classes) - 1], 'precision'].mean()
-    metrics.loc['--avg--', 'recall'] = metrics.loc[classes[0]:classes[len(classes) - 1], 'recall'].mean()
-    metrics.loc['--avg--', 'f1-score'] = metrics.loc[classes[0]:classes[len(classes) - 1], 'f1-score'].mean()
-    metrics.loc['--avg--', 'N Obs'] = metrics.loc[classes[0]:classes[len(classes) - 1], 'N Obs'].sum()
-    return metrics
+    m_tab.loc['--avg--', 'precision'] = m_tab.loc[classes[0]:classes[len(classes) - 1], 'precision'].mean()
+    m_tab.loc['--avg--', 'recall'] = m_tab.loc[classes[0]:classes[len(classes) - 1], 'recall'].mean()
+    m_tab.loc['--avg--', 'f1-score'] = m_tab.loc[classes[0]:classes[len(classes) - 1], 'f1-score'].mean()
+    m_tab.loc['--avg--', 'N Obs'] = m_tab.loc[classes[0]:classes[len(classes) - 1], 'N Obs'].sum()
+    return m_tab

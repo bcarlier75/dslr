@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from logreg_tools import plot_confusion_matrix, metrics, confusion_matrix, score
 
 
-class LogisticRegressionOvrTrain(object):
+class LogisticRegressionOvrGd(object):
     def _scaling(self, x):
         for i in range(len(x)):
             x[i] = (x[i] - x.mean()) / x.std()
@@ -33,11 +33,10 @@ class LogisticRegressionOvrTrain(object):
         loss = 1 / len(y) * np.sum(-y * np.log(h + e) - (1 - y) * np.log(1 - h + e))
         return loss
 
-    def fit(self, x, y, num_iter=5000, lr=0.01, verbose=False):
+    def fit(self, x, y, num_iter=5000, alpha=0.01, verbose=False):
         x = np.insert(x, 0, 1, axis=1)
         thetas = []
         classes = np.unique(y)
-        costs = np.zeros(num_iter)
         # one vs. rest binary classification
         for c in classes:
             if verbose:
@@ -46,10 +45,10 @@ class LogisticRegressionOvrTrain(object):
             theta = np.zeros(x.shape[1])
             for epoch in range(num_iter):
                 h = self._sigmoid(np.dot(x, theta))
-                grad = 1 / len(binary_y) * np.dot((binary_y - h), x)
-                theta += lr * grad
+                grad = 1 / len(binary_y) * np.dot(x.T, (h - binary_y))
+                theta -= alpha * grad
                 if verbose and epoch % (num_iter / 10) == 0:
-                    print(f'epoch {epoch:<6}: loss is {self._loss(h, binary_y):.15f}')
+                    print(f'epoch {epoch:<6}: loss {self._loss(h, binary_y):.15f}')
             thetas.append(theta)
         return thetas
 
@@ -59,9 +58,9 @@ if __name__ == "__main__":
     if len(sys.argv) > 2 and sys.argv[2] == '-v':
         verb = True
     df_train = pd.read_csv(sys.argv[1], index_col="Index")
-    logreg = LogisticRegressionOvrTrain()
+    logreg = LogisticRegressionOvrGd()
     x_train, y_train = logreg.preprocessing(df_train)
-    weights = logreg.fit(x_train, y_train, num_iter=5000, lr=0.01, verbose=verb)
+    weights = logreg.fit(x_train, y_train, num_iter=5000, alpha=0.01, verbose=verb)
     np.save('weights', weights)
     print('Weights saved to weights.npy.')
     if verb:
