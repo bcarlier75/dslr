@@ -28,15 +28,16 @@ class LogisticRegressionOvrGd(object):
                             for theta in thetas]) for xi in x]
         return [classes[p] for p in preds]
 
-    def _loss(self, h, y):
+    def _loss(self, h, y, m):
         e = 1e-6
-        loss = 1 / len(y) * np.sum(-y * np.log(h + e) - (1 - y) * np.log(1 - h + e))
+        loss = 1 / m * np.sum(-y * np.log(h + e) - (1 - y) * np.log(1 - h + e))
         return loss
 
     def fit(self, x, y, num_iter=5000, alpha=0.01, verbose=False):
         x = np.insert(x, 0, 1, axis=1)
         thetas = []
         classes = np.unique(y)
+        m = len(y)
         # one vs. rest binary classification
         for c in classes:
             if verbose:
@@ -45,10 +46,10 @@ class LogisticRegressionOvrGd(object):
             theta = np.zeros(x.shape[1])
             for epoch in range(num_iter):
                 h = self._sigmoid(np.dot(x, theta))
-                grad = 1 / len(binary_y) * np.dot(x.T, (h - binary_y))
-                theta -= alpha * grad
+                gradient = np.dot(x.T, (h - binary_y))
+                theta -= alpha * (1 / m) * gradient
                 if verbose and epoch % (num_iter / 10) == 0:
-                    print(f'epoch {epoch:<6}: loss {self._loss(h, binary_y):.15f}')
+                    print(f'epoch {epoch:<6}: loss {self._loss(h, binary_y, m):.15f}')
             thetas.append(theta)
         return thetas
 
