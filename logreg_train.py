@@ -49,7 +49,7 @@ class LogisticRegressionOvrMiniBatch(object):
         return loss
 
     def fit(self, x: np.array, y: np.array, num_iter=1000, eta0=0.01,
-            verbose=True, learning_rate='optimal', alpha=0.0001,
+            verbose=False, learning_rate='optimal', alpha=0.0001,
             batch_size=40, shuffle=True):
 
         x = np.insert(x, 0, 1, axis=1)  # adding interception feature
