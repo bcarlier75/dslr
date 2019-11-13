@@ -209,6 +209,6 @@ if __name__ == "__main__":
         # Plot cost history for class of index = ' class_i' in u_classes.
         plot_cost_history(num_iter, cost_hist, class_i=0)
         # Plot confusion matrix.
-        # Change normalize to False for non-normalizeda version. (False by default)
+        # Change normalize to False for non-normalized version. (False by default)
         plot_confusion_matrix(y_train, y_pred, classes=u_classes, cm=final_cm, normalize=True)
         plt.show()
